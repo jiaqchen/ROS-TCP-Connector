@@ -32,15 +32,28 @@ namespace Unity.Robotics.Visualizations
         SortMode m_SortMode;
         Texture2D m_FillTexture;
 
-        public void Start()
+        public IEnumerator Start()
         {
+            yield return new WaitForSeconds(6f); // Wait 5 seconds to establish all the ROS connections
+
             m_FillTexture = VisualizationUtils.MakeTexture(16, 16, new Color(0.125f, 0.19f, 0.25f));
 
             m_Connection = ROSConnection.GetOrCreateInstance();
             HudPanel.RegisterTab(this, (int)HudTabOrdering.Topics);
             HudPanel.RegisterTab(new VisualizationLayoutTab(this), (int)HudTabOrdering.Layout);
-            LoadLayout();
+
             m_Connection.ListenForTopics(OnNewTopic, notifyAllExistingTopics: true);
+
+            // Add Subscriber for point cloud
+            string PCTopic = "/PCtoVisualize";
+            string PC2MsgName = "sensor_msgs/PointCloud2";
+            VisualizationTopicsTabEntry vis;
+            m_Topics.TryGetValue(PCTopic, out vis);
+            
+            PointCloud2DefaultVisualizer visFactory = (PointCloud2DefaultVisualizer)(vis.GetVisualFactory());
+
+            ((PointCloud2DefaultVisualizer)visFactory).GetOrCreateVisual(PCTopic).SetDrawingEnabled(true);
+            // vis.SetVisualizing(true, true);
         }
 
         void OnNewTopic(RosTopicState state)
