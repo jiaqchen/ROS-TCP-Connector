@@ -275,8 +275,10 @@ namespace Unity.Robotics.Visualizations
                         break;
                     case MarkerMsg.TRIANGLE_LIST:
                         {
-                            drawing.transform.position = marker.pose.position.From<C>();
-                            drawing.transform.rotation = marker.pose.orientation.From<C>();
+                            drawing.transform.localPosition = marker.pose.position.From<C>();
+                            drawing.transform.localRotation = marker.pose.orientation.From<C>();
+                            // drawing.transform.position = marker.pose.position.From<C>();
+                            // drawing.transform.rotation = marker.pose.orientation.From<C>();
                             float radius = (float)marker.scale.x;
                             if (marker.colors.Length == marker.points.Length)
                             {
