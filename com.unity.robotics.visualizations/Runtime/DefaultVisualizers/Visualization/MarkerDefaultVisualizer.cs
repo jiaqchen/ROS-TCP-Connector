@@ -111,7 +111,12 @@ namespace Unity.Robotics.Visualizations
                         }
                         if (!ns.TryGetValue(marker.id, out drawing))
                         {
+                            // Get first item from ns if it exists
+                            Vector3 existingScale = Vector3.one;
+                            if (ns.Count > 0)
+                                existingScale = ns.First().Value.transform.localScale;
                             drawing = Drawing3d.Create();
+                            drawing.transform.localScale = existingScale;
                             ns.Add(marker.id, drawing);
                         }
                         if (marker.lifetime.sec == 0 && marker.lifetime.nanosec == 0)
